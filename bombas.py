@@ -115,7 +115,7 @@ def get_info(accesorios: dict):
     idk()
 
 
-def idk():
+def idk(): #Duda del funcionamiento de está función 
     z1 = input("Ingresa la elevación inicial: ")
     z2 = input("Ingresa la elevación final: ")
     dz = float(z2) - float(z1)
