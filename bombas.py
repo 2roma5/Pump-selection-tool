@@ -134,9 +134,5 @@ def idk():
     print(dz)
     print(fricciones)
 
-def main():
-    get_info(accesorios)
-    print(accesorios)
 
-if __name__ == '__main__':
-    main()
+
