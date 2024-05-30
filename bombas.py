@@ -107,10 +107,6 @@ def get_info(accesorios: dict):
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
     time.sleep(1.5)
     print("Por favor ingresa los requerimientos y características de tu proceso.")
-    h = float(input("Ingresa la cabeza que necesita tu proceso [m]: "))
-    if h < 0:
-        h = abs(h)
-        print("¿Negativo?")
     q = float(input("Ingresa el flujo que necesita tu proceso [L/min]: "))
     if q < 0:
         q = abs(q)
