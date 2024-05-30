@@ -1,6 +1,8 @@
 import time
 import numpy as np
-from functions import Re, factor_friction
+import pandas as pd
+from functions import Re, factor_friction, velocity, Hs
+from functions import plot_data, friction
 
 # Variables del proceso
 accesorios = {
@@ -120,20 +122,32 @@ def get_info(accesorios: dict):
 
 
 def idk():
-    z1 = input("Ingresa la elevación inicial: ")
-    z2 = input("Ingresa la elevación final: ")
-    dz = float(z2) - float(z1)
+    # z1 = input("Ingresa la elevación inicial: ")
+    # z2 = input("Ingresa la elevación final: ")
+    # z1 = float(z1)
+    # z2 = float(z2)
+    z1 = 120.5/100
+    z2 = 316/100
     Q = np.linspace(0, 1000, 1000)
-    area = 20
-    velocidades = [q/area for q in Q]
-    densidad = 1000
-    viscosidad = 0.001
-    diametro = 0.1
+    Q_ = Q/1000/60
+    densidad = 998.2
+    viscosidad = 0.00105
+    diametro = 2.0670/39.37
+    velocidades = [velocity(q, diametro) for q in Q_]
     Reynolds = [Re(v, diametro, densidad, viscosidad) for v in velocidades]
-    fricciones = [factor_friction(diametro, 0.0001, r) for r in Reynolds]
-    print(dz)
-    print(fricciones)
+    f_fricc = [factor_friction(diametro, 0.000046, r) for r in Reynolds]
+    fricciones = [friction(f, diametro, v, 19) for f, v in zip(
+        f_fricc, velocidades)]
+    cabeza = [Hs(0, 1, 998.2, v, v, z1, z2, f) for v, f in zip(
+        velocidades, fricciones)]
+    plot_data(Q, cabeza, "Cabeza vs Flujo", "Flujo [L/min]", "Cabeza [m]")
+    df = pd.DataFrame({"Velocidad": velocidades, "Reynolds": Reynolds,
+                       "Factor de fricciones": f_fricc, "Cabeza": cabeza,
+                       "Fricciones": fricciones})
+    print(df)
+    input("Presiona Enter para continuar...")
 
 
-get_info(accesorios)
-print(accesorios)
+idk()
+# get_info(accesorios)
+# print(accesorios)
