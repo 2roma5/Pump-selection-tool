@@ -118,10 +118,10 @@ def get_info(accesorios: dict):
 
 
 def idk():
-    # z1 = input("Ingresa la elevación inicial: ")
-    # z2 = input("Ingresa la elevación final: ")
-    # z1 = float(z1)
-    # z2 = float(z2)
+    z1 = input("Ingresa la elevación inicial: ")
+    z2 = input("Ingresa la elevación final: ")
+    z1 = float(z1)
+    z2 = float(z2)
     z1 = 120.5/100
     z2 = 316/100
     Q = np.linspace(0, 1000, 1000)
@@ -145,5 +145,5 @@ def idk():
 
 
 idk()
-# get_info(accesorios)
-# print(accesorios)
+get_info(accesorios)
+print(accesorios)
