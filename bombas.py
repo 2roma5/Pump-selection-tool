@@ -2,7 +2,7 @@ import time
 import numpy as np
 import pandas as pd
 from functions import Re, factor_friction, velocity, Hs
-from functions import plot_data, friction
+from functions import plot_data, friction, len_eq
 
 # Variables del proceso
 accesorios = {
@@ -15,11 +15,19 @@ accesorios = {
     "r": 0,
     "tp": 0,
     "cc": 0,
-    "rn": 0,
-    "rho": 0,
-    "mu": 0
 }
 
+len = {
+    "vc": 8*(2.0670/39.37),
+    "vg": 340*(2.0670/39.37),
+    "vb": 150*(2.0670/39.37),
+    "vm": 45*(2.0670/39.37),
+    "vn": 100*(2.0670/39.37),
+    "po": 10*(2.0670/39.37),
+    "r": 10*(2.0670/39.37),
+    "tp": 10*(2.0670/39.37),
+    "cc": 30*(2.0670/39.37)
+}
 
 # Catálogo de accesorios (solo imprime las opciones)
 def catalogo():
@@ -31,7 +39,7 @@ def catalogo():
 
 
 # Consigue las variables del proceso (accesorios)
-def get_process(accesorios: dict):
+def get_process(accesorios: dict[str, int]):
     while True:
         try:
             op = int(input("opción: "))
@@ -53,7 +61,7 @@ def get_process(accesorios: dict):
                 get_process(accesorios)
             elif op == 5:
                 c = int(input("Cuántas válvulas check tiene?: "))
-                accesorios["vc"] = accesorios["vc"] + c
+                accesorios["vn"] = accesorios["vn"] + c
                 get_process(accesorios)
             elif op == 6:
                 c = int(input("¿Cuántas placas de orificio tiene?: "))
@@ -81,29 +89,8 @@ def get_process(accesorios: dict):
         except ValueError:
             print("Solo se admiten números, inténtelo de nuevo.")
 
-
-# Consigue descripción del fluido
-def get_fluid(accesorios: dict):
-    c = float(input("Ahora, ingresa el radio nominal de tus tuberías: "))
-    accesorios["rn"] = accesorios["rn"] + c
-    if accesorios["rn"] < 0:
-        accesorios["rn"] = abs(accesorios["rn"])
-        print("¿?")
-    print("Ahora, hablamos acerca de que estás transportando.")
-    c = float(input("Ingresa la densidad de tu fluido: "))
-    accesorios["rho"] = accesorios["rho"] + c
-    if accesorios["rho"] < 0:
-        accesorios["rho"] = abs(accesorios["rho"])
-        print("Error fatal, basta por favor.")
-    c = float(input("Ingresa la viscocidad de tu fluido: "))
-    accesorios["mu"] = accesorios["mu"] + c
-    if accesorios["mu"] < 0:
-        accesorios["mu"] = abs(accesorios["mu"])
-        print("Error fatal, deja de jugar con nosotros, sabemos dónde vives.")
-
-
 # Consigue los requerimientos del proceso
-def get_info(accesorios: dict):
+def get_info(accesorios: dict[str, int]):
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
     time.sleep(1.5)
     print("Por favor ingresa los requerimientos y características de tu proceso.")
@@ -113,15 +100,15 @@ def get_info(accesorios: dict):
         print("¿Negativo?")
     catalogo()
     get_process(accesorios)
-    get_fluid(accesorios)
     idk()
 
 
 def idk():
-    z1 = input("Ingresa la elevación inicial: ")
-    z2 = input("Ingresa la elevación final: ")
-    z1 = float(z1)
-    z2 = float(z2)
+    z1 = float(input("Ingresa la elevación inicial: "))
+    z2 = float(input("Ingresa la elevación final: "))
+    l = float(input("Ingrese la longuitud de tubería recta: "))
+    #z1 = float(z1)
+    #z2 = float(z2)
     z1 = 120.5/100
     z2 = 316/100
     Q = np.linspace(0, 1000, 1000)
@@ -129,10 +116,11 @@ def idk():
     densidad = 998.2
     viscosidad = 0.00105
     diametro = 2.0670/39.37
+    longuitudT = len_eq(accesorios, len) + l
     velocidades = [velocity(q, diametro) for q in Q_]
     Reynolds = [Re(v, diametro, densidad, viscosidad) for v in velocidades]
     f_fricc = [factor_friction(diametro, 0.000046, r) for r in Reynolds]
-    fricciones = [friction(f, diametro, v, 19) for f, v in zip(
+    fricciones = [friction(f, diametro, v, longuitudT) for f, v in zip(
         f_fricc, velocidades)]
     cabeza = [Hs(0, 1, 998.2, v, v, z1, z2, f) for v, f in zip(
         velocidades, fricciones)]
@@ -143,7 +131,3 @@ def idk():
     print(df)
     input("Presiona Enter para continuar...")
 
-
-idk()
-get_info(accesorios)
-print(accesorios)

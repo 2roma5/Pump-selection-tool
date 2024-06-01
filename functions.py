@@ -38,3 +38,9 @@ def plot_data(x: list, y: list, title: str, xlabel: str, ylabel: str) -> None:
 
 def velocity(flow, diameter):
     return flow/(3.1416*(diameter/2)**2)
+
+
+def len_eq(accesorios: dict[str, int], len:dict[str, int]) -> int:
+    dict = {k: accesorios[k]*len[k] for k in accesorios}
+    longuitudeseq = sum(dict.values())
+    return longuitudeseq 
