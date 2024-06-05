@@ -1,7 +1,6 @@
 import time
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from functions import Re, factor_friction, velocity, Hs
 from functions import plot_data, friction, len_eq, bomba1, bomba1c, bomba3a
 
@@ -121,7 +120,6 @@ def get_info() -> None:
         print("¿Negagivo?")
     diametro = diametro/39.37
 
-
 # Calcula la cabeza del sistema y la presenta 
 def idk() -> None:
     Q = np.linspace(0, 180, 1000)
@@ -175,10 +173,8 @@ def idk() -> None:
         plot_data(Q, bomba1(Q), cabeza)
         plot_data(Q, bomba1c(Q), cabeza)
         plot_data(Q, bomba3a(Q), cabeza)
-        
-
-
-
+   
+# Calcula el valor específico de la cabeza del sistema
 def head() -> None:
     velocidad = velocity(caudal/180/60, diametro)
     reynolds = Re(velocidad, diametro, densidad, viscosidad)
