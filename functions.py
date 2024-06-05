@@ -23,12 +23,14 @@ def friction(f_friction, diameter, velocity, length):
     return f_friction*length*velocity**2/(diameter*2*9.81)
 
 
-def plot_data(x: list, y: list, title: str, xlabel: str, ylabel: str) -> None:
+def plot_data(x: list, y: list, z:list) -> None:
     fig, ax = plt.subplots()
-    ax.plot(x, y)
-    ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
+    ax.plot(x, y, label='Cabeza de la bomba')
+    ax.plot(x, z, label ='Cabeza del sistema')
+    ax.set(xlabel='Flujo [L/min]', ylabel='Cabeza [m]', title= 'Cabeza vs Flujo')
     ax.set_ylim(0, max(y)+max(y)*0.1)
     ax.grid()
+    ax.legend()
     plt.show()
 
 

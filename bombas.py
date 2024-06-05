@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from functions import Re, factor_friction, velocity, Hs
 from functions import plot_data, friction, len_eq, bomba1, bomba1c, bomba3a
 
@@ -94,22 +95,38 @@ def get_info() -> None:
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
     time.sleep(1.5)
     print("Por favor ingresa los requerimientos y características de tu proceso.")
+    global z1, z2, l, diametro, caudal
     caudal = float(input("Ingresa el flujo que necesita tu proceso [L/min]: "))
     if caudal < 0:
         caudal = abs(caudal)
         print("¿Negativo?")
-    global z1, z2, l, diametro
+    if caudal > 200:
+        print("Lo sentimos, ninguna de nuestras bombas cumple este requerimiento.")
+        get_info()
     z1 = float(input("Ingresa la elevación inicial [m]: "))
+    if z1 < 0:
+        z1 = abs(z1)
+        print("¿Negativo?")
     z2 = float(input("Ingresa la elevación final [m]: "))
+    if z2 < 0:
+        z2 = abs(z2)
+        print("¿Negativo?")
     l = float(input("Ingrese la longuitud de tubería recta [m]: "))
+    if l < 0:
+        l = abs(l)
+        print("¿Negativo?")
     diametro = float(input("Ingrese el diámetro de su tubería [in]: "))
-    "\n"
+    if diametro < 0:
+        diametro = abs(diametro)
+        print("¿Negagivo?")
     diametro = diametro/39.37
+
 
 # Calcula la cabeza del sistema y la presenta 
 def idk() -> None:
-    Q = np.linspace(0, 200, 1000)
-    Q_ = Q/200/60
+    Q = np.linspace(0, 180, 1000)
+    Q_ = Q/180/60
+    global densidad, viscosidad, longuitudT
     densidad = 998.2
     viscosidad = 0.00105
     longuitudT = len_eq(accesorios, len) + l
@@ -118,10 +135,59 @@ def idk() -> None:
     f_fricc = [factor_friction(diametro, 0.000046, r) for r in Reynolds]
     fricciones = [friction(f, diametro, v, longuitudT) for f, v in zip(
         f_fricc, velocidades)]
-    cabeza = [Hs(1, 1, 998.2, v, v, z1, z2, f) for v, f in zip(
+    cabeza = [Hs(0, 1, 998.2, v, v, z1, z2, f) for v, f in zip(
         velocidades, fricciones)]
-    plot_data(Q, cabeza, "Cabeza vs Flujo", "Flujo [L/min]", "Cabeza [m]")
-    df = pd.DataFrame({"Velocidad": velocidades, "Reynolds": Reynolds,
-                       "Factor de fricciones": f_fricc, "Cabeza": cabeza,
-                       "Fricciones": fricciones})
-    input("Presiona Enter para continuar...")
+    if head() < bomba1(caudal):
+        print("La bomba con el tag B1 es ideal para tu proceso")
+        time.sleep(1)
+        plot_data(Q, bomba1(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    elif head() < bomba1c(caudal):
+        print("La bomba con el tag B1C es ideal para tu proceso.")
+        time.sleep(1)
+        plot_data(Q, bomba1c(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    elif head() < bomba3a(caudal):
+        time.sleep(1)
+        plot_data(Q, bomba3a(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    elif head() < bomba1(caudal) and bomba1c(caudal):
+        print("Las bombas con el tag B1 y B1C son ideales para tu proceso.")
+        time.sleep(1)
+        plot_data(Q, bomba1(Q), cabeza)
+        plot_data(Q, bomba1c(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    elif head() < bomba1(caudal) and bomba3a(caudal):
+        print("Las bombas con el tag B1 y B3A son ideales para tu proceso.")
+        time.sleep(1)
+        plot_data(Q, bomba1(Q), cabeza)
+        plot_data(Q, bomba3a(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    elif head() < bomba1c(caudal) and bomba3a(caudal):
+        print("Las bombas con el tag B1C y B3A son ideales para tu proceso.")
+        time.sleep(1)
+        plot_data(Q, bomba1c(Q), cabeza)
+        plot_data(Q, bomba3a(Q), cabeza)
+        print("¡Muchas gracias por usar nuestro programa!")
+    else:
+        print("Lo sentimos, ninguna de nuestras bombas es capaz de cumplir con tus requisitos.")
+        time.sleep(1)
+        plot_data(Q, bomba1(Q), cabeza)
+        plot_data(Q, bomba1c(Q), cabeza)
+        plot_data(Q, bomba3a(Q), cabeza)
+        
+
+
+
+def head() -> None:
+    velocidad = velocity(caudal/180/60, diametro)
+    reynolds = Re(velocidad, diametro, densidad, viscosidad)
+    factor_de_friccion = (factor_friction(diametro, 0.000046, reynolds))
+    fricciones = friction(factor_de_friccion, diametro, velocidad, longuitudT)
+    return Hs(1,1,998.2, velocidad, velocidad, z1, z2, fricciones)
+
+
+get_info()
+catalogo()
+get_process(accesorios)
+idk()
