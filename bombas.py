@@ -1,8 +1,8 @@
 import time
 import numpy as np
-import pandas as pd
 from functions import Re, factor_friction, velocity, Hs
 from functions import plot_data, friction, len_eq, bomba1, bomba1c, bomba3a
+from functions import plot_2_data, find_intersections
 
 # Accesorios
 accesorios = {
@@ -19,16 +19,17 @@ accesorios = {
 
 # Leq = (K*D)/f
 len = {
-    "vc": (0.15*0.052)/0.019, 
-    "vg": (6.5*0.052)/0.019, 
-    "vb": (0.1*0.052)/0.019, 
-    "vm": (0.7*0.052)/0.019, 
+    "vc": (0.15*0.052)/0.019,
+    "vg": (6.5*0.052)/0.019,
+    "vb": (0.1*0.052)/0.019,
+    "vm": (0.7*0.052)/0.019,
     "vn": (2.75*0.052)/0.019,
     "po": (0.1*0.052)/0.019,
     "r": (7*0.052)/0.019,
     "tp": (7*0.052)/0.019,
     "cc": (0.7*0.052)/0.019
 }
+
 
 # Catálogo de accesorios (solo imprime las opciones)
 def catalogo() -> None:
@@ -37,6 +38,7 @@ def catalogo() -> None:
     print("\t     CATÁLOGO DE ACCESORIOS\n")
     print("1. Válvula de compuerta.  6. Placa de orificio.\n2. Válvula de globo.      7. Rotámetro.\n3. Válvula de bola.       8. Tubo pitot.\n4. Válvula de mariposa.   9. Codos\n5. Válvula check.         10. Salir.") 
     print("\n------------------------------------------------")
+
 
 # Consigue las variables del proceso (accesorios)
 def get_process(accesorios: dict[str, int]) -> None:
@@ -89,6 +91,7 @@ def get_process(accesorios: dict[str, int]) -> None:
         except ValueError:
             print("Solo se admiten números, inténtelo de nuevo.")
 
+
 # Consigue los requerimientos del proceso
 def get_info() -> None:
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
@@ -120,7 +123,8 @@ def get_info() -> None:
         print("¿Negagivo?")
     diametro = diametro/39.37
 
-# Calcula la cabeza del sistema y la presenta 
+
+# Calcula la cabeza del sistema y la presenta
 def idk() -> None:
     Q = np.linspace(0, 180, 1000)
     Q_ = Q/180/60
@@ -135,37 +139,43 @@ def idk() -> None:
         f_fricc, velocidades)]
     cabeza = [Hs(0, 1, 998.2, v, v, z1, z2, f) for v, f in zip(
         velocidades, fricciones)]
-    if head() < bomba1(caudal):
+    intersecciones1 = find_intersections(Q, bomba1(Q), cabeza)
+    intersecciones2 = find_intersections(Q, bomba1c(Q), cabeza)
+    intersecciones3 = find_intersections(Q, bomba3a(Q), cabeza)
+    if head() < bomba1(caudal) and intersecciones1:
         print("La bomba con el tag B1 es ideal para tu proceso")
         time.sleep(1)
         plot_data(Q, bomba1(Q), cabeza)
         print("¡Muchas gracias por usar nuestro programa!")
-    elif head() < bomba1c(caudal):
+    elif head() < bomba1c(caudal) and intersecciones2:
         print("La bomba con el tag B1C es ideal para tu proceso.")
         time.sleep(1)
         plot_data(Q, bomba1c(Q), cabeza)
         print("¡Muchas gracias por usar nuestro programa!")
-    elif head() < bomba3a(caudal):
+    elif head() < bomba3a(caudal) and intersecciones3:
         time.sleep(1)
         plot_data(Q, bomba3a(Q), cabeza)
         print("¡Muchas gracias por usar nuestro programa!")
-    elif head() < bomba1(caudal) and bomba1c(caudal):
+    elif head() < bomba1(caudal) and bomba1c(caudal) and intersecciones1 and intersecciones2:
         print("Las bombas con el tag B1 y B1C son ideales para tu proceso.")
         time.sleep(1)
         plot_data(Q, bomba1(Q), cabeza)
         plot_data(Q, bomba1c(Q), cabeza)
+        plot_2_data(Q, bomba1(Q), bomba1c(Q), cabeza, "Bomba 1", "Bomba 1C")
         print("¡Muchas gracias por usar nuestro programa!")
-    elif head() < bomba1(caudal) and bomba3a(caudal):
+    elif head() < bomba1(caudal) and bomba3a(caudal) and intersecciones1 and intersecciones3:
         print("Las bombas con el tag B1 y B3A son ideales para tu proceso.")
         time.sleep(1)
         plot_data(Q, bomba1(Q), cabeza)
         plot_data(Q, bomba3a(Q), cabeza)
+        plot_2_data(Q, bomba1(Q), bomba3a(Q), cabeza, "Bomba 1", "Bomba 3A")
         print("¡Muchas gracias por usar nuestro programa!")
-    elif head() < bomba1c(caudal) and bomba3a(caudal):
+    elif head() < bomba1c(caudal) and bomba3a(caudal) and intersecciones2 and intersecciones3:
         print("Las bombas con el tag B1C y B3A son ideales para tu proceso.")
         time.sleep(1)
         plot_data(Q, bomba1c(Q), cabeza)
         plot_data(Q, bomba3a(Q), cabeza)
+        plot_2_data(Q, bomba1c(Q), bomba3a(Q), cabeza, "Bomba 1C", "Bomba 3A")
         print("¡Muchas gracias por usar nuestro programa!")
     else:
         print("Lo sentimos, ninguna de nuestras bombas es capaz de cumplir con tus requisitos.")
@@ -173,14 +183,15 @@ def idk() -> None:
         plot_data(Q, bomba1(Q), cabeza)
         plot_data(Q, bomba1c(Q), cabeza)
         plot_data(Q, bomba3a(Q), cabeza)
-   
+
+
 # Calcula el valor específico de la cabeza del sistema
-def head() -> None:
+def head() -> float:
     velocidad = velocity(caudal/180/60, diametro)
     reynolds = Re(velocidad, diametro, densidad, viscosidad)
     factor_de_friccion = (factor_friction(diametro, 0.000046, reynolds))
     fricciones = friction(factor_de_friccion, diametro, velocidad, longuitudT)
-    return Hs(1,1,998.2, velocidad, velocidad, z1, z2, fricciones)
+    return Hs(1, 1, 998.2, velocidad, velocidad, z1, z2, fricciones)
 
 
 get_info()
