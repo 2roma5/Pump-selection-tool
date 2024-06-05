@@ -1,10 +1,6 @@
 import matplotlib.pyplot as plt
 from math import log10
 
-# Calcula la cabeza de la bomba
-def Hb(pressure_1, pressure_2, density_1):
-    (pressure_2-pressure_1)/(density_1*9.81)
-
 # Calcula la cabeza del sistema
 def Hs(pressure_1, pressure_2, density_1, velocity_1, velocity_2,
        z_1, z_2, frictions):
@@ -44,3 +40,19 @@ def len_eq(accesorios: dict[str, int], len:dict[str, int]) -> int:
     dict = {k: accesorios[k]*len[k] for k in accesorios}
     longuitudeseq = sum(dict.values())
     return longuitudeseq 
+
+
+def bomba1(flujo):
+    cabeza = (-2e-6*flujo**3) - (0.0005*flujo**2) - (0.0131*flujo) + 28.214
+    return cabeza
+
+
+def bomba1c(flujo):
+    cabeza = (-0.0004*flujo**2) - (0.0211*flujo) + 23.07
+    return cabeza
+
+
+def bomba3a(flujo):
+    cabeza = (-0.0003*flujo**2) - (0.0571*flujo) + 20.06
+    return cabeza
+

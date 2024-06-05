@@ -2,7 +2,7 @@ import time
 import numpy as np
 import pandas as pd
 from functions import Re, factor_friction, velocity, Hs
-from functions import plot_data, friction, len_eq
+from functions import plot_data, friction, len_eq, bomba1, bomba1c, bomba3a
 
 # Accesorios
 accesorios = {
@@ -31,7 +31,7 @@ len = {
 }
 
 # Catálogo de accesorios (solo imprime las opciones)
-def catalogo():
+def catalogo() -> None:
     print("\nSeleccione los accesorios presentes en su proceso: ")
     print("------------------------------------------------\n")
     print("\t     CATÁLOGO DE ACCESORIOS\n")
@@ -39,7 +39,7 @@ def catalogo():
     print("\n------------------------------------------------")
 
 # Consigue las variables del proceso (accesorios)
-def get_process(accesorios: dict[str, int]):
+def get_process(accesorios: dict[str, int]) -> None:
     while True:
         try:
             op = int(input("opción: "))
@@ -90,7 +90,7 @@ def get_process(accesorios: dict[str, int]):
             print("Solo se admiten números, inténtelo de nuevo.")
 
 # Consigue los requerimientos del proceso
-def get_info():
+def get_info() -> None:
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
     time.sleep(1.5)
     print("Por favor ingresa los requerimientos y características de tu proceso.")
@@ -107,7 +107,7 @@ def get_info():
     diametro = diametro/39.37
 
 # Calcula la cabeza del sistema y la presenta 
-def idk():
+def idk() -> None:
     Q = np.linspace(0, 200, 1000)
     Q_ = Q/200/60
     densidad = 998.2
@@ -125,8 +125,3 @@ def idk():
                        "Factor de fricciones": f_fricc, "Cabeza": cabeza,
                        "Fricciones": fricciones})
     input("Presiona Enter para continuar...")
-
-get_info()
-catalogo()
-get_process(accesorios)
-idk()
