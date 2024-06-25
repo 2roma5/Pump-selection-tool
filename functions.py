@@ -1,6 +1,14 @@
 import matplotlib.pyplot as plt
 from math import log10
 
+# Catálogo de accesorios (solo imprime las opciones)
+def catalogo() -> None:
+    print("\nSeleccione los accesorios presentes en su proceso: ")
+    print("------------------------------------------------\n")
+    print("\t     CATÁLOGO DE ACCESORIOS\n")
+    print("1. Válvula de compuerta.  6. Placa de orificio.\n2. Válvula de globo.      7. Rotámetro.\n3. Válvula de bola.       8. Tubo pitot.\n4. Válvula de mariposa.   9. Codos\n5. Válvula check.         10. Salir.") 
+    print("\n------------------------------------------------")
+
 # Calcula la cabeza del sistema
 def Hs(pressure_1, pressure_2, density_1, velocity_1, velocity_2,
        z_1, z_2, frictions):
@@ -52,7 +60,6 @@ def plot_2_data(x: list, y: list, z: list, s, title_1, title_2) -> None:
     plt.show()
 
 
-
 # Calcula las velocidades 
 def velocity(flow, diameter):
     return flow/(3.1416*(diameter/2)**2)
@@ -83,4 +90,3 @@ def find_intersections(x, y1, y2):
             yi = y1[i-1] + (y1[i] - y1[i-1]) * (xi - x[i-1]) / (x[i] - x[i-1])
             intersections.append((xi, yi))
     return intersections
-
