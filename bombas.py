@@ -19,17 +19,16 @@ accesorios = {
 
 # Leq = (K*D)/f
 len = {
-    "vc": (0.15*0.052)/0.019,
-    "vg": (6.5*0.052)/0.019,
-    "vb": (0.1*0.052)/0.019,
-    "vm": (0.7*0.052)/0.019,
+    "vc": (0.15*0.052)/0.019, 
+    "vg": (6.5*0.052)/0.019, 
+    "vb": (0.1*0.052)/0.019, 
+    "vm": (0.7*0.052)/0.019, 
     "vn": (2.75*0.052)/0.019,
     "po": (0.1*0.052)/0.019,
     "r": (7*0.052)/0.019,
     "tp": (7*0.052)/0.019,
     "cc": (0.7*0.052)/0.019
 }
-
 
 # Catálogo de accesorios (solo imprime las opciones)
 def catalogo() -> None:
@@ -38,7 +37,6 @@ def catalogo() -> None:
     print("\t     CATÁLOGO DE ACCESORIOS\n")
     print("1. Válvula de compuerta.  6. Placa de orificio.\n2. Válvula de globo.      7. Rotámetro.\n3. Válvula de bola.       8. Tubo pitot.\n4. Válvula de mariposa.   9. Codos\n5. Válvula check.         10. Salir.") 
     print("\n------------------------------------------------")
-
 
 # Consigue las variables del proceso (accesorios)
 def get_process(accesorios: dict[str, int]) -> None:
@@ -91,7 +89,6 @@ def get_process(accesorios: dict[str, int]) -> None:
         except ValueError:
             print("Solo se admiten números, inténtelo de nuevo.")
 
-
 # Consigue los requerimientos del proceso
 def get_info() -> None:
     print("¡Bienvenido, aquí podrás elegir la mejor bomba para tu proceso!")
@@ -123,8 +120,7 @@ def get_info() -> None:
         print("¿Negagivo?")
     diametro = diametro/39.37
 
-
-# Calcula la cabeza del sistema y la presenta
+# Calcula la cabeza del sistema y la presenta 
 def idk() -> None:
     Q = np.linspace(0, 180, 1000)
     Q_ = Q/180/60
@@ -183,15 +179,14 @@ def idk() -> None:
         plot_data(Q, bomba1(Q), cabeza)
         plot_data(Q, bomba1c(Q), cabeza)
         plot_data(Q, bomba3a(Q), cabeza)
-
-
+   
 # Calcula el valor específico de la cabeza del sistema
 def head() -> float:
     velocidad = velocity(caudal/180/60, diametro)
     reynolds = Re(velocidad, diametro, densidad, viscosidad)
     factor_de_friccion = (factor_friction(diametro, 0.000046, reynolds))
     fricciones = friction(factor_de_friccion, diametro, velocidad, longuitudT)
-    return Hs(1, 1, 998.2, velocidad, velocidad, z1, z2, fricciones)
+    return Hs(1,1,998.2, velocidad, velocidad, z1, z2, fricciones)
 
 
 get_info()
