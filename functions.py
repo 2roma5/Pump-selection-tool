@@ -17,6 +17,14 @@ def Hs(pressure_1, pressure_2, density_1, velocity_1, velocity_2,
     dv = velocity_2**2-velocity_1**2
     return (dp*100**2)/(density_1) + (dz) + (dv)/(2*9.81) + frictions
 
+# Calcula el valor específico de la cabeza del sistema
+def head(caudal, diametro, densidad, mu, lent, z1, z2) -> float:
+    velocidad = velocity(caudal/180/60, diametro)
+    reynolds = Re(velocidad, diametro, densidad, mu)
+    factor_de_friccion = (factor_friction(diametro, 0.000046, reynolds))
+    fricciones = friction(factor_de_friccion, diametro, velocidad, lent)
+    return Hs(1, 1, 998.2, velocidad, velocidad, z1, z2, fricciones)
+
 # Calcula el número de Reynolds
 def Re(velocity, diameter, density, viscosity):
     return velocity*diameter*density/viscosity
