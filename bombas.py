@@ -17,7 +17,7 @@ accesorios = {
     "cc": 0,
 }
 
-
+# Parámetros de fluido y proceso
 param = {
     "len": 0.0,
     "densi": 998.2,
@@ -49,53 +49,50 @@ len = {
 }
 
 # Consigue las variables del proceso (accesorios)
-def get_process(accesorios: dict[str, int]) -> None:
-    while True:
+def get_process(accesorios: dict[str, int]) -> bool:
         try:
             op = int(input("opción: "))
             if op == 1:
                 c = int(input("¿Cuántas válvulas de compuerta tiene?: "))
                 accesorios["vc"] += c
-                get_process(accesorios)
+                return True
             elif op == 2:
                 c = int(input("¿Cuántas válvulas de globo tiene?: "))
                 accesorios["vg"] += c
-                get_process(accesorios)
+                return True
             elif op == 3:
                 c = int(input("¿Cuántas válvulas de bola tiene?: "))
                 accesorios["vb"] += c
-                get_process(accesorios)
+                return True
             elif op == 4:
                 c = int(input("¿Cuántas válvulas de mariposa tiene?: "))
                 accesorios["vm"] += c
-                get_process(accesorios)
+                return True
             elif op == 5:
                 c = int(input("Cuántas válvulas check tiene?: "))
                 accesorios["vn"] += c
-                get_process(accesorios)
+                return True
             elif op == 6:
                 c = int(input("¿Cuántas placas de orificio tiene?: "))
                 accesorios["po"] += c
-                get_process(accesorios)
+                return True
             elif op == 7:
                 c = int(input("¿Cuántos rotámetros tiene?: "))
                 accesorios["r"] += c
-                get_process(accesorios)
+                return True
             elif op == 8:
                 c = int(input("¿Cuántos tubos de pitot tiene?: "))
                 accesorios["tp"] += c
-                get_process(accesorios)
+                return True
             elif op == 9:
                 c = int(input("¿Cuántos codos tiene?: "))
                 accesorios["cc"] += c
-                get_process(accesorios)
+                return True
             elif op == 10:
                 print("¡Gracias!\n")
-                break
+                return False
             else:
                 print("Esa no es una opción, intente de nuevo.")
-                get_process(accesorios)
-            break
         except ValueError:
             print("Solo se admiten números, inténtelo de nuevo.")
 
@@ -127,6 +124,11 @@ def get_info() -> None:
         param["dia"] = abs(param["dia"])
         print("¿Negagivo?")
     param["dia"] /= 39.37
+    catalogo()
+    while get_process(accesorios) == True:
+        if get_process(accesorios) == False:
+            break
+    idk()
 
 # Calcula la cabeza del sistema y la presenta
 def idk() -> None:
@@ -188,10 +190,9 @@ def idk() -> None:
     print(hs)
     print(bomba1(param["Q"]))
 
+def main():
+    get_info()
 
-
-get_info()
-catalogo()
-get_process(accesorios)
-idk()
+if __name__ == '__main__':
+    main()
 
